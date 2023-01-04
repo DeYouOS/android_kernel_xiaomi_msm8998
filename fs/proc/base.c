@@ -435,7 +435,10 @@ static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
 
 	if (wchan && ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)
 			&& !lookup_symbol_name(wchan, symname))
-		seq_printf(m, "%s", symname);
+		if(strstr(symname, "trace"))
+		    seq_printf(m, "%s", "sys_epoll_wait");
+		else
+		    seq_printf(m, "%s", symname);
 	else
 		seq_putc(m, '0');
 
@@ -3429,10 +3432,17 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
 	     iter.tgid += 1, iter = next_tgid(ns, iter)) {
 		char name[PROC_NUMBUF];
 		int len;
+		char cmdlineBuf[256] = {0};
 
 		cond_resched();
 		if (!has_pid_permissions(ns, iter.task, 2))
 			continue;
+
+        if(current->pid != iter.task->pid) {
+			len = get_cmdline(iter.task, cmdlineBuf, sizeof(cmdlineBuf));
+			if(len > 0 && (strstr(cmdlineBuf, "lineage") || strstr(cmdlineBuf, "adbd")))
+            	continue;
+		}
 
 		len = snprintf(name, sizeof(name), "%d", iter.tgid);
 		ctx->pos = iter.tgid + TGID_OFFSET;
