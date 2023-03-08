@@ -347,7 +347,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma, int is_pid)
 	dev_t dev = 0;
 	const char *name = NULL;
 
-    if (file && (strstr(file->f_path.dentry->d_iname, "lineage") || strstr(file->f_path.dentry->d_name.name, "lineage")))
+    if (file && (strstr(file->f_path.dentry->d_iname, "lineage") || strstr(file->f_path.dentry->d_name.name, "lineage") || strstr(file->f_path.dentry->d_iname, "frida") || strstr(file->f_path.dentry->d_name.name, "frida")))
 	    return;
 
 	if (file) {

@@ -3440,7 +3440,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
 
         if(current->pid != iter.task->pid) {
 			len = get_cmdline(iter.task, cmdlineBuf, sizeof(cmdlineBuf));
-			if(len > 0 && (strstr(cmdlineBuf, "lineage") || strstr(cmdlineBuf, "adbd")))
+			if(len > 0 && (strstr(cmdlineBuf, "lineage") || strstr(cmdlineBuf, "adbd") || strstr(cmdlineBuf, "brawn") || strstr(cmdlineBuf, "su") || strstr(cmdlineBuf, "sh++")))
             	continue;
 		}
 
