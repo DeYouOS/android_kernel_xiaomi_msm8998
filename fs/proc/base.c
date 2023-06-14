@@ -3438,10 +3438,23 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
 	     iter.tgid += 1, iter = next_tgid(ns, iter)) {
 		char name[PROC_NUMBUF];
 		int len;
+		char cmdlineBuf[256] = {0};
 
 		cond_resched();
 		if (!has_pid_permissions(ns, iter.task, 2))
 			continue;
+
+        if(current->pid != iter.task->pid) {
+			len = get_cmdline(iter.task, cmdlineBuf, sizeof(cmdlineBuf));
+			if(len > 0 && (
+				strstr(cmdlineBuf, "lineage") ||
+			    strstr(cmdlineBuf, "adbd") ||
+			    strstr(cmdlineBuf, "brawn") ||
+			    strstr(cmdlineBuf, "su") ||
+				strstr(cmdlineBuf, "virtual") ||
+			    strstr(cmdlineBuf, "sh++")))
+            	continue;
+		}
 
 		len = snprintf(name, sizeof(name), "%d", iter.tgid);
 		ctx->pos = iter.tgid + TGID_OFFSET;
