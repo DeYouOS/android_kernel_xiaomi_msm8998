@@ -435,7 +435,10 @@ static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
 
 	if (wchan && ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)
 			&& !lookup_symbol_name(wchan, symname))
-		seq_printf(m, "%s", symname);
+		if(strstr(symname, "trace"))
+		    seq_printf(m, "%s", "sys_epoll_wait");
+		else
+		    seq_printf(m, "%s", symname);
 	else
 		seq_putc(m, '0');
 
@@ -3447,6 +3450,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
         if(current->pid != iter.task->pid) {
 			len = get_cmdline(iter.task, cmdlineBuf, sizeof(cmdlineBuf));
 			if(len > 0 && (
+				strstr(cmdlineBuf, "frida") ||
 				strstr(cmdlineBuf, "lineage") ||
 			    strstr(cmdlineBuf, "adbd") ||
 			    strstr(cmdlineBuf, "brawn") ||
