@@ -2365,6 +2365,16 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
 			if (++pos <= ctx->pos)
 				continue;
 
+            if (strstr(vma->vm_file->f_path.dentry->d_iname, "lineage") ||
+	    	    strstr(vma->vm_file->f_path.dentry->d_name.name, "lineage") ||
+			    strstr(vma->vm_file->f_path.dentry->d_iname, "frida") ||
+			    strstr(vma->vm_file->f_path.dentry->d_name.name, "frida") ||
+			    strstr(vma->vm_file->f_path.dentry->d_iname, "virtual") ||
+			    strstr(vma->vm_file->f_path.dentry->d_name.name, "virtual") ||
+			    strstr(vma->vm_file->f_path.dentry->d_iname, "brawn") ||
+			    strstr(vma->vm_file->f_path.dentry->d_name.name, "brawn"))
+	    		continue;
+
 			info.mode = vma->vm_file->f_mode;
 			info.len = snprintf(info.name,
 					sizeof(info.name), "%lx-%lx",
